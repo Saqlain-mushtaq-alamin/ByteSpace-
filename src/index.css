@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* Design tokens — full ramps taken from the ByteSpace brand PDF (Typography / Colors / Layout Grid) */
+@theme {
+  --font-satoshi: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-clash: "Clash Display", ui-sans-serif, system-ui, sans-serif;
+
+  /* Neutral / "Black" scale */
+  --color-gray-50: #f5f5f6;
+  --color-gray-100: #e5e6e8;
+  --color-gray-200: #ced0d3;
+  --color-gray-300: #abaeb5;
+  --color-gray-400: #82868e;
+  --color-gray-500: #666973;
+  --color-gray-600: #585a62;
+  --color-gray-700: #4b4c53;
+  --color-gray-800: #424348;
+  --color-gray-900: #3a3b3f;
+  --color-gray-950: #242528;
+
+  /* Primary / Persian Blue scale — brand = 800 */
+  --color-brand-50: #e7f6ff;
+  --color-brand-100: #d3eeff;
+  --color-brand-200: #b0ddff;
+  --color-brand-300: #81c5ff;
+  --color-brand-400: #4f9dff;
+  --color-brand-500: #2872ff;
+  --color-brand-600: #0445ff;
+  --color-brand-700: #0043ff;
+  --color-brand: #003be2;
+  --color-brand-900: #0b36a4;
+  --color-brand-950: #071e5f;
+
+  /* Secondary / Electric Lime scale — lime = 400 */
+  --color-lime-50: #fdffe4;
+  --color-lime-100: #faffc5;
+  --color-lime-200: #f2ff92;
+  --color-lime-300: #e4ff54;
+  --color-lime: #d4fb20;
+  --color-lime-500: #cbfc01;
+  --color-lime-600: #8cb400;
+  --color-lime-700: #6a8902;
+  --color-lime-800: #546b09;
+  --color-lime-900: #465a0d;
+  --color-lime-950: #243300;
+
+  /* Legacy aliases used by earlier components */
+  --color-black-200: #ced0d3;
+  --color-black-400: #82868e;
+  --color-black-700: #4b4c53;
+
+  --radius-input: 12px;
+  --radius-pill: 24px;
+  --radius-card: 24px;
+
+  /* 12-col / 120px margin / 40px gutter grid (1440 canvas) */
+  --grid-margin: 120px;
+  --grid-gutter: 40px;
+}
+
+@layer base {
+  body {
+    @apply font-satoshi bg-white text-gray-950 antialiased;
+  }
+}
+
+@layer components {
+  /* Poppins SemiBold heading scale */
+  .text-heading-l { @apply font-poppins text-[72px] font-semibold leading-[1.2]; }
+  .text-heading-m { @apply font-poppins text-[44px] font-semibold leading-[1.2]; }
+  .text-heading-s { @apply font-poppins text-[36px] font-semibold leading-[1.2]; }
+  .text-heading-xs { @apply font-poppins text-[20px] font-semibold leading-[1.2]; }
+  /* Satoshi Regular body scale */
+  .text-body-l { @apply text-[18px] leading-[1.6]; }
+  .text-body-m { @apply text-[16px] leading-[1.6]; }
+  .text-body-s { @apply text-[14px] leading-[1.6]; }
+  .text-body-xs { @apply text-[12px] leading-[1.6]; }
+  /* Satoshi Medium label scale */
+  .text-label-l { @apply text-[18px] font-medium leading-[1.2]; }
+  .text-label-m { @apply text-[16px] font-medium leading-[1.2]; }
+  .text-label-s { @apply text-[14px] font-medium leading-[1.2]; }
+  .text-label-xs { @apply text-[12px] font-medium leading-[1.2]; }
+}
+
+/* Blue grid background (120px cells) */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.12) 1px, transparent 1px);
+  background-size: 120px 120px;
+}
