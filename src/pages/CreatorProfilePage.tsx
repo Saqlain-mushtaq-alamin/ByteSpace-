@@ -1,180 +1,177 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import HomeHeader from "@/components/home/HomeHeader";
 import NewsletterFooter from "@/components/shared/NewsletterFooter";
 import CourseCard from "@/components/marketing/CourseCard";
-import Breadcrumb from "@/components/shared/Breadcrumb";
+import { COURSE_IMAGES, STUDENT_AVATARS, CREATOR_AVATAR } from "@/components/shared/DesignAssets";
 
-import creatorAvatar from "@/assets/images/creator-avatar-1.png";
+const creatorAvatar = CREATOR_AVATAR;
 
-const av = (n: number) => new URL(`../assets/images/avatars/avatar-${n}.png`, import.meta.url).href;
-const avatars = [1, 2, 3, 4].map(av);
-const img = (name: string) => new URL(`../assets/images/${name}.png`, import.meta.url).href;
-
-const CREATOR_COURSES = [
-  { image: "course-figma", title: "Learn Figma from Basic" },
-  { image: "course-build-digital-asset", title: "Build Digital Asset" },
-  { image: "course-big-data", title: "the Power of Big Data" },
-  { image: "course-productivity", title: "Balancing Productivity and Self-Care" },
-  { image: "course-money", title: "Mastering Money Management" },
-  { image: "course-startup", title: "From Idea to Startup Success" },
+const COURSES = [
+  { image: COURSE_IMAGES.figma, title: "Learn Figma from Basic", category: "UI/UX Design" },
+  { image: COURSE_IMAGES.digitalAsset, title: "Build Digital Asset", category: "Drawing & Painting" },
+  { image: COURSE_IMAGES.bigData, title: "the Power of Big Data", category: "Marketing" },
+  { image: COURSE_IMAGES.productivity, title: "Balancing Productivity and Self-Care", category: "Creative Marketing" },
+  { image: COURSE_IMAGES.money, title: "Mastering Money Management", category: "Social Media" },
+  { image: COURSE_IMAGES.startup, title: "From Idea to Startup Success", category: "Marketing" },
 ];
+
+const CATEGORIES = Array.from(new Set(COURSES.map((c) => c.category)));
+
+const LEVEL_OPTIONS = [
+  { value: "All", label: "Level" },
+  { value: "Beginner", label: "Beginner" },
+  { value: "Intermediate", label: "Intermediate" },
+  { value: "Advanced", label: "Advanced" },
+];
+const CATEGORY_OPTIONS = [{ value: "All", label: "Category" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))];
+const SORT_OPTIONS = [
+  { value: "relevant", label: "Most relevant" },
+  { value: "az", label: "A to Z" },
+  { value: "za", label: "Z to A" },
+];
+
+const svgProps = {
+  width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor",
+  strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true,
+} as const;
+
+const IconFunnel = () => <svg {...svgProps}><path d="M3 5h18l-7 8v6l-4 2v-8z" /></svg>;
+const IconBars = () => <svg {...svgProps}><path d="M6 20v-6M12 20V9M18 20V4" /></svg>;
+const IconGrid = () => <svg {...svgProps}><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>;
+const IconSort = () => <svg {...svgProps}><path d="M4 7h16M7 12h10M10 17h4" /></svg>;
+
+interface FilterSelectProps {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}
+
+function FilterSelect({ icon, label, value, onChange, options }: FilterSelectProps) {
+  return (
+    <label className="relative inline-flex shrink-0">
+      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-700">{icon}</span>
+      <select
+        aria-label={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-11 cursor-pointer appearance-none rounded-full border border-gray-200 bg-white pl-11 pr-9 text-[14px] font-medium text-gray-950 outline-none transition hover:border-gray-300 focus:border-brand"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      <svg {...svgProps} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </label>
+  );
+}
+
+const statPill = "inline-flex items-center gap-1.5 rounded-full bg-white px-6 py-3 text-[16px] text-gray-950";
 
 export default function CreatorProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
-  const [levelFilter, setLevelFilter] = useState("All");
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [sortBy, setSortBy] = useState("Most relevant");
+  const [level, setLevel] = useState("All");
+  const [category, setCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("relevant");
+
+  const results = COURSES.filter((c) => category === "All" || c.category === category);
+  if (sortBy !== "relevant") {
+    results.sort((a, b) => a.title.localeCompare(b.title) * (sortBy === "az" ? 1 : -1));
+  }
 
   return (
     <div className="min-h-screen bg-white text-gray-950">
-      {/* HERO SECTION (Page 7 of ByteSpace New Check website.pdf) */}
-      <section className="relative w-full bg-brand bg-grid text-white pb-20 pt-[120px] overflow-hidden" aria-labelledby="creator-title">
+      {/* HERO */}
+      <section className="relative w-full overflow-hidden bg-brand bg-grid pb-20 pt-[160px] text-white" aria-labelledby="creator-title">
         <HomeHeader />
 
-        <div className="mx-auto flex w-[1200px] max-w-full flex-col gap-8 px-6">
-          <Breadcrumb
-            items={[
-              { label: "Home", to: "/" },
-              { label: "Creators", to: "/creator/purepearl-studio" },
-              { label: "PurePearl Studio" },
-            ]}
-          />
-
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
-            {/* Creator Avatar */}
-            <div className="relative shrink-0">
-              <img
-                src={creatorAvatar}
-                alt="PurePearl Studio"
-                className="size-32 rounded-3xl border-4 border-white/20 object-cover shadow-2xl backdrop-blur-md sm:size-40"
-              />
-              <span className="absolute -bottom-2 -right-2 rounded-full bg-lime px-3 py-1 text-xs font-bold text-gray-950 shadow-md">
-                Verified
-              </span>
-            </div>
-
-            {/* Creator Info */}
-            <div className="flex flex-1 flex-col gap-4">
+        <div className="mx-auto flex w-[1200px] max-w-full flex-col gap-7 px-6">
+          {/* Avatar + name */}
+          <div className="flex items-center gap-5">
+            <img
+              src={creatorAvatar}
+              alt="PurePearl Studio"
+              className="size-[96px] shrink-0 rounded-2xl object-cover"
+            />
+            <div className="flex flex-col gap-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 id="creator-title" className="font-poppins text-[36px] font-bold text-white sm:text-[44px]">
+                <h1 id="creator-title" className="font-poppins text-[28px] font-semibold leading-[1.2] sm:text-[32px]">
                   PurePearl Studio
                 </h1>
-                <span className="rounded-pill bg-white/20 px-3.5 py-1 text-body-xs font-semibold text-lime backdrop-blur-md">
+                <span className="rounded-full bg-lime px-4 py-1.5 text-[14px] font-medium leading-none text-gray-950">
                   Creator
                 </span>
               </div>
-
-              <p className="font-poppins text-lg font-semibold text-lime">
-                Passionate UI/UX, Web designer
-              </p>
-
-              <p className="max-w-[800px] text-body-m leading-[1.7] text-gray-100">
-                Welcome to the creative world of PurePearl Studio. Here, you'll discover the passion, expertise, and
-                inspiration that drive my creative journey. Let's explore and learn together!
-              </p>
-
-              <p className="max-w-[800px] text-body-m leading-[1.7] text-gray-200">
-                Dive into my creative portfolio, showcasing a glimpse of my artistic endeavors. From digital designs to
-                multimedia projects, each piece tells a unique story. Explore the world of creativity with me.
-              </p>
-
-              {/* Stats & Follow Button */}
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <div className="flex items-center gap-6 text-body-m">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="font-poppins text-2xl font-bold text-white">3</span>
-                    <span className="text-gray-300">Products</span>
-                  </div>
-                  <div className="h-4 w-px bg-white/30" />
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="font-poppins text-2xl font-bold text-white">
-                      {isFollowing ? "13" : "12"}
-                    </span>
-                    <span className="text-gray-300">Followers</span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsFollowing(!isFollowing)}
-                  className={`rounded-pill px-8 py-2.5 text-label-m font-bold transition shadow-md cursor-pointer ${
-                    isFollowing
-                      ? "bg-white text-brand hover:bg-gray-100"
-                      : "bg-lime text-gray-950 hover:bg-lime/90 hover:scale-102"
-                  }`}
-                >
-                  {isFollowing ? "Following ✓" : "Follow"}
-                </button>
-              </div>
+              <p className="text-[16px] text-white">Passionate UI/UX, Web designer</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* FILTER & COURSES SECTION (Page 7 of ByteSpace New Check website.pdf) */}
-      <section className="mx-auto w-[1200px] max-w-full px-6 py-16" aria-label="Creator courses catalog">
-        <div className="flex flex-col gap-10">
-          {/* Filter Bar */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-6">
+          {/* Bio */}
+          <div className="flex flex-col gap-3 text-[14px] leading-[1.7] text-white/90">
+            <p>
+              Welcome to the creative world of PurePearl Studio. Here, you'll discover the passion, expertise, and
+              inspiration that drive my creative journey. Let's explore and learn together!
+            </p>
+            <p>
+              Dive into my creative portfolio, showcasing a glimpse of my artistic endeavors. From digital designs to
+              multimedia projects, each piece tells a unique story. Explore the world of creativity with me.
+            </p>
+          </div>
+
+          {/* Stats + Follow */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-1">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-pill bg-gray-50 border border-gray-200 px-4 py-2 text-body-s font-semibold text-gray-950">
-                Filter
+              <span className={statPill}>
+                <strong className="font-semibold">{COURSES.length}</strong> Products
               </span>
-
-              <select
-                value={levelFilter}
-                onChange={(e) => setLevelFilter(e.target.value)}
-                className="rounded-pill border border-gray-200 bg-white px-4 py-2 text-body-s font-medium text-gray-700 outline-none transition focus:border-brand"
-              >
-                <option value="All">Level: All</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-              </select>
-
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-pill border border-gray-200 bg-white px-4 py-2 text-body-s font-medium text-gray-700 outline-none transition focus:border-brand"
-              >
-                <option value="All">Category: All</option>
-                <option value="Design">UI/UX Design</option>
-                <option value="Development">Development</option>
-                <option value="Business">Business</option>
-              </select>
+              <span className={statPill}>
+                <strong className="font-semibold">{isFollowing ? 13 : 12}</strong> Followers
+              </span>
             </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-body-s text-gray-500">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="rounded-pill border border-gray-200 bg-white px-4 py-2 text-body-s font-semibold text-gray-950 outline-none transition focus:border-brand"
-              >
-                <option value="Most relevant">Most relevant</option>
-                <option value="Newest">Newest</option>
-                <option value="Highest Rated">Highest Rated</option>
-              </select>
-            </div>
-          </div>
-
-          {/* 3-Column Course Grid */}
-          <div className="grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {CREATOR_COURSES.map((course) => (
-              <CourseCard
-                key={course.title}
-                image={img(course.image)}
-                title={course.title}
-                author="purepearl studio"
-                price="25"
-                avatars={avatars}
-              />
-            ))}
+            <button
+              type="button"
+              onClick={() => setIsFollowing(!isFollowing)}
+              aria-pressed={isFollowing}
+              className={`cursor-pointer rounded-full px-8 py-3 text-[16px] font-medium transition active:scale-[0.98] ${
+                isFollowing ? "bg-white text-brand hover:bg-gray-100" : "bg-lime text-gray-950 hover:brightness-95"
+              }`}
+            >
+              {isFollowing ? "Following ✓" : "Follow"}
+            </button>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* FILTERS + COURSES */}
+      <section className="mx-auto flex w-[1200px] max-w-full flex-col gap-10 px-6 pb-24 pt-[72px]" aria-label="Creator courses">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex h-11 items-center gap-2 rounded-full border border-gray-200 px-4 text-[14px] font-medium">
+              <IconFunnel /> Filter
+            </span>
+            <FilterSelect icon={<IconBars />} label="Level" value={level} onChange={setLevel} options={LEVEL_OPTIONS} />
+            <FilterSelect icon={<IconGrid />} label="Category" value={category} onChange={setCategory} options={CATEGORY_OPTIONS} />
+          </div>
+          <FilterSelect icon={<IconSort />} label="Sort by" value={sortBy} onChange={setSortBy} options={SORT_OPTIONS} />
+        </div>
+
+        <div className="grid grid-cols-1 justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {results.map((c) => (
+            <CourseCard
+              key={c.title}
+              image={c.image}
+              title={c.title}
+              author="purepearl studio"
+              price="25"
+              avatars={STUDENT_AVATARS}
+            />
+          ))}
+        </div>
+      </section>
+
       <NewsletterFooter />
     </div>
   );
