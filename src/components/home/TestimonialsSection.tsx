@@ -1,27 +1,28 @@
-import { STUDENT_AVATARS } from "@/components/shared/DesignAssets";
-
+import student1 from "../../assets/images/Ellipse.png";
+import student2 from "../../assets/images/Ellipse-1.png";
+import student3 from "../../assets/images/Ellipse-2.png";
 const TESTIMONIALS = [
   {
     name: "Sarah M.",
     role: "Enthusiastic Learner",
-    avatar: STUDENT_AVATARS[0],
-    rating: 5,
+    avatar: student1,
+
     quote:
       "ByteSpace has transformed my approach to learning. The diverse range of courses and the quality of content provided by creators have exceeded my expectations. The platform truly fosters a sense of community and lifelong learning.",
   },
   {
     name: "James L.",
     role: "Lifelong Learner",
-    avatar: STUDENT_AVATARS[1],
-    rating: 5,
+    avatar: student2,
+
     quote:
       "I've tried several online learning platforms, and ByteSpace stands out for its vibrant community and the variety of courses available. The easy navigation and engaging content make it a go-to platform for continuous skill development.",
   },
   {
     name: "Alex B.",
     role: "Inspired Creator",
-    avatar: STUDENT_AVATARS[2],
-    rating: 5,
+    avatar: student3,
+
     quote:
       "As a creator, ByteSpace has been a game-changer for me. The Course Editor is user-friendly, and the support from the community is incredible. It's fulfilling to see my courses making a positive impact on learners globally.",
   },
@@ -52,24 +53,28 @@ export default function TestimonialsSection() {
           {TESTIMONIALS.map((t) => (
             <article
               key={t.name}
-              className="flex flex-col gap-6 rounded-3xl border border-gray-100 bg-white p-8 shadow-md transition duration-300 hover:shadow-xl hover:-translate-y-1.5"
+              className="flex flex-col rounded-[20px] border border-gray-100 bg-white p-4 shadow-sm"
             >
-              <div className="flex items-center gap-4">
+              {/* Avatar + Name + Role */}
+              <div className="flex flex-col items-start">
                 <img
                   src={t.avatar}
                   alt={t.name}
-                  className="size-16 rounded-full object-cover shadow-sm ring-2 ring-brand/10 shrink-0"
+                  className="size-16 rounded-full object-cover"
                 />
-                <div className="flex flex-col">
-                  <p className="font-poppins text-lg font-semibold text-gray-950">{t.name}</p>
-                  <p className="text-body-s font-semibold text-brand">{t.role}</p>
-                  <div className="flex items-center gap-0.5 mt-0.5 text-amber-400 text-sm">
-                    {"★".repeat(t.rating)}
-                  </div>
-                </div>
+
+                <p className="mt-5 font-poppins text-[16px] font-semibold text-gray-950">
+                  {t.name}
+                </p>
+
+                <p className="mt-1 text-[14px] font-medium text-blue-600">
+                  {t.role}
+                </p>
               </div>
-              <p className="text-body-m leading-[1.7] text-gray-700 italic">
-                &ldquo;{t.quote}&rdquo;
+
+              {/* Quote */}
+              <p className="mt-6 text-[14px] leading-[1.6] text-gray-600">
+                "{t.quote}"
               </p>
             </article>
           ))}
