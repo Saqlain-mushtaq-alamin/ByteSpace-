@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import AvatarStack from "./AvatarStack";
-import starIcon from "@/assets/icons/star-outlined.svg";
 import { STUDENT_AVATARS } from "@/components/shared/DesignAssets";
 import { cn } from "@/lib/cn";
 
@@ -17,7 +17,7 @@ export interface CourseCardProps {
 const chip =
   "rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium leading-none text-white backdrop-blur-md shadow-sm";
 
-/** Course_Card_1 matching ByteSpace Figma & planning/homepage.md (373x384, radius 24) */
+/** Course card (373x384, radius 24) */
 export default function CourseCard({
   image,
   title,
@@ -27,6 +27,8 @@ export default function CourseCard({
   className,
   slug,
 }: CourseCardProps) {
+  const [imgFailed, setImgFailed] = useState(false);
+
   const courseSlug =
     slug ||
     title
@@ -34,10 +36,7 @@ export default function CourseCard({
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
-  const displayAvatars =
-    avatars && avatars.length > 0 && !avatars[0].includes("70")
-      ? avatars
-      : STUDENT_AVATARS;
+  const displayAvatars = avatars && avatars.length > 0 ? avatars : STUDENT_AVATARS;
 
   return (
     <article
@@ -51,13 +50,23 @@ export default function CourseCard({
         to={`/course/${courseSlug}`}
         className="relative block h-[195px] w-full overflow-hidden rounded-[16px] bg-gray-100"
       >
-        <img
-          src={image}
-          alt={title}
-          className="size-full object-cover transition duration-500 group-hover:scale-108"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+        {imgFailed || !image ? (
+          <div className="grid size-full place-items-center text-[12px] text-gray-400">
+            Image not found
+          </div>
+        ) : (
+          <img
+            src={image}
+            alt={title}
+            decoding="async"
+            className="size-full object-cover transition duration-500 group-hover:scale-105"
+            onError={() => {
+              console.warn("CourseCard: image failed to load ->", image);
+              setImgFailed(true);
+            }}
+          />
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
         <div className="absolute bottom-2.5 left-2.5 flex flex-wrap gap-1.5">
           <span className={chip}>17 Lessons</span>
           <span className={chip}>2h 16m</span>
@@ -76,10 +85,7 @@ export default function CourseCard({
             </Link>
             <p className="mt-1 text-[12px] leading-tight text-gray-500">
               by{" "}
-              <Link
-                to="/creator/purepearl-studio"
-                className="font-medium text-brand hover:underline"
-              >
+              <Link to="/creator/purepearl-studio" className="font-medium text-brand hover:underline">
                 {author}
               </Link>
             </p>
@@ -87,22 +93,27 @@ export default function CourseCard({
 
           <Link
             to={`/course/${courseSlug}/reviews`}
-            className="flex items-center gap-1 text-[16px] font-bold text-gray-900 transition hover:text-brand shrink-0"
+            className="flex shrink-0 items-center gap-1 text-[16px] font-bold text-gray-900 transition hover:text-brand"
           >
             <span>4.5</span>
-            <img src={starIcon} alt="" className="size-4 fill-amber-500 text-amber-500" />
+            {/* Inline SVG so the star always shows (an <img> SVG ignores text/fill classes) */}
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              className="size-4 text-gray-400"
+              aria-hidden
+            >
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
           </Link>
         </div>
 
         <div className="flex items-center justify-between pt-1">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-2.5 py-1 text-[11px] font-semibold text-gray-700 border border-gray-100">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="text-brand shrink-0"
-            >
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-2.5 py-1 text-[11px] font-semibold text-gray-700">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-brand">
               <path d="M4 18h3v-4H4v4z" />
               <path d="M10 18h3v-8h-3v8z" />
               <path d="M16 18h3v-13h-3v13z" />
@@ -114,16 +125,10 @@ export default function CourseCard({
 
         <div className="flex items-baseline justify-between border-t border-gray-100 pt-2">
           <p className="flex items-baseline gap-1">
-            <span className="font-poppins text-[22px] font-bold text-brand">
-              ${price}
-            </span>
+            <span className="font-poppins text-[22px] font-bold text-brand">${price}</span>
             <span className="text-[12px] font-medium text-gray-500">/lifetime</span>
           </p>
-
-          <Link
-            to={`/course/${courseSlug}`}
-            className="text-[12px] font-semibold text-brand hover:underline"
-          >
+          <Link to={`/course/${courseSlug}`} className="text-[12px] font-semibold text-brand hover:underline">
             View Details →
           </Link>
         </div>
