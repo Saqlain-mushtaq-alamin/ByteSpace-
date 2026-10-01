@@ -1,14 +1,36 @@
-const partners = ["EduCore", "Skillnest", "Learnify", "BrightPath", "NovaEd"];
+import vector from "../../assets/icons/Vector.png";
+import vector1 from "../../assets/icons/Vector-1.png";
+import vector2 from "../../assets/icons/Vector-2.png";
+import vector3 from "../../assets/icons/Vector-3.png";
+import vector5 from "../../assets/icons/Vector-5.png";
 
-/** Frame 2 (1:1794) — 5 partner wordmarks under the hero */
+const partners = [
+  { name: "EduCore", icon: vector },
+  { name: "Skillnest", icon: vector5 },
+  { name: "Learnify", icon: vector1 },
+  { name: "BrightPath", icon: vector2 },
+  { name: "NovaEd", icon: vector3 },
+];
+
 export default function LogoPartners() {
   return (
-    <div className="bg-brand pb-[80px]">
-      <div className="mx-auto flex w-[1132px] max-w-full flex-wrap items-center justify-between gap-x-10 gap-y-4 px-6">
-        {partners.map((name) => (
-          <span key={name} className="font-poppins text-[20px] font-semibold text-white/50">
-            {name}
-          </span>
+    <div className="bg-[#f8f8f8] py-[28px]">
+      <div className="mx-auto flex w-[1132px] max-w-full items-center justify-between px-6">
+        {partners.map((partner) => (
+          <div
+            key={partner.name}
+            className="flex items-center gap-2"
+          >
+            <img
+              src={partner.icon}
+              alt={`${partner.name} logo`}
+              className="h-[40px] w-[40px] object-contain"
+            />
+
+            <span className="font-poppins text-[22px] font-semibold text-[#858990]">
+              {partner.name}
+            </span>
+          </div>
         ))}
       </div>
     </div>
